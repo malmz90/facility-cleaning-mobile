@@ -2,10 +2,9 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { ActivityIndicator, StyleSheet } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import AuthNavigator from './src/navigation/AuthNavigator';
-import AppNavigator from './src/navigation/AppNavigator';
 import { AuthProvider } from './src/context/AuthContext';
 import useAuth from './src/hooks/useAuth';
+import RootNavigator from './src/navigation/RootNavigator';
 import { COLORS } from './src/theme/colors';
 
 export default function App() {
@@ -13,15 +12,15 @@ export default function App() {
     <SafeAreaProvider>
       <AuthProvider>
         <NavigationContainer>
-          <RootNavigator />
+          <AppContent />
         </NavigationContainer>
       </AuthProvider>
     </SafeAreaProvider>
   );
 }
 
-function RootNavigator() {
-  const { loading, isAuthenticated } = useAuth();
+function AppContent() {
+  const { loading } = useAuth();
 
   if (loading) {
     return (
@@ -31,7 +30,7 @@ function RootNavigator() {
     );
   }
 
-  return isAuthenticated ? <AppNavigator /> : <AuthNavigator />;
+  return <RootNavigator />;
 }
 
 const styles = StyleSheet.create({

@@ -24,3 +24,15 @@ export function onAuthStateChange(callback) {
     callback(session ?? null);
   });
 }
+
+export async function getOrganizationMemberships(userId) {
+  const { data, error } = await supabase
+    .from('organization_members')
+    .select('organization_id, role')
+    .eq('user_id', userId);
+
+  return {
+    memberships: data ?? [],
+    error,
+  };
+}
