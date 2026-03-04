@@ -13,13 +13,13 @@ export default function DashboardScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.container}>
-        <Text variant="title">Dashboard</Text>
+        <Text variant="title">Översikt</Text>
         <Text variant="body" style={styles.copy}>
-          Cleaner app shell is ready. Next step is wiring cleaning flows.
+          Stommarna för städappen är redo. Nästa steg är att koppla städflöden.
         </Text>
-        <Button title="Go to Scan Room" onPress={() => navigation.navigate('ScanRoom')} />
+        <Button title="Gå till rumsskanning" onPress={() => navigation.navigate('ScanRoom')} />
         <View style={styles.gap} />
-        <Button title="Sign Out" variant="secondary" onPress={signOut} />
+        <Button title="Logga ut" variant="secondary" onPress={signOut} />
       </View>
     </SafeAreaView>
   );

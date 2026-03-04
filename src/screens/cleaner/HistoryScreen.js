@@ -9,9 +9,9 @@ export default function HistoryScreen() {
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.container}>
-        <Text variant="title">History</Text>
+        <Text variant="title">Historik</Text>
         <Text variant="body" style={styles.copy}>
-          Cleaner cleaning history placeholder.
+          Platshållare för städhistorik för städare.
         </Text>
       </View>
     </SafeAreaView>

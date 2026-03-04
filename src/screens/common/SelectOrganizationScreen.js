@@ -13,20 +13,20 @@ export default function SelectOrganizationScreen() {
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.container}>
-        <Text variant="title">Select Organization</Text>
+        <Text variant="title">Välj organisation</Text>
         <Text variant="caption" style={styles.subtitle}>
-          Choose where you want to work right now.
+          Välj vilken organisation du vill arbeta i just nu.
         </Text>
 
         <View style={styles.list}>
           {organizations.map(item => (
             <View key={item.organizationId} style={styles.item}>
-              <Text variant="body">Organization: {item.organizationId}</Text>
+              <Text variant="body">Organisation: {item.organizationId}</Text>
               <Text variant="caption" style={styles.roleText}>
-                Role: {item.role}
+                Roll: {item.role}
               </Text>
               <Button
-                title="Select"
+                title="Välj"
                 onPress={() => setOrganizationId(item.organizationId)}
                 variant="secondary"
               />

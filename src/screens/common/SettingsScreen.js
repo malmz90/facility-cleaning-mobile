@@ -13,19 +13,19 @@ export default function SettingsScreen() {
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.container}>
-        <Text variant="title">Settings</Text>
+        <Text variant="title">Inställningar</Text>
         <Text variant="caption" style={styles.info}>
-          User: {user?.email ?? '-'}
+          Användare: {user?.email ?? '-'}
         </Text>
         <Text variant="caption" style={styles.info}>
-          Role: {role ?? '-'}
+          Roll: {role ?? '-'}
         </Text>
         <Text variant="caption" style={styles.info}>
-          Organization: {organizationId ?? '-'}
+          Organisation: {organizationId ?? '-'}
         </Text>
 
         <View style={styles.buttonWrap}>
-          <Button title="Sign Out" variant="secondary" onPress={signOut} />
+          <Button title="Logga ut" variant="secondary" onPress={signOut} />
         </View>
       </View>
     </SafeAreaView>

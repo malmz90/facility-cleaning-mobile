@@ -9,9 +9,9 @@ export default function ScanRoomScreen() {
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.container}>
-        <Text variant="title">Scan Room</Text>
+        <Text variant="title">Skanna rum</Text>
         <Text variant="body" style={styles.copy}>
-          QR scanner screen placeholder. Scanner implementation comes next.
+          Platshållare för QR-skanning. Skannerlogik läggs till i nästa steg.
         </Text>
       </View>
     </SafeAreaView>

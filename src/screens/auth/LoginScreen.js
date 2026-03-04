@@ -24,7 +24,7 @@ export default function LoginScreen() {
   const handleSignIn = async () => {
     const normalizedEmail = email.trim().toLowerCase();
     if (!normalizedEmail || !password) {
-      setErrorMessage('Please enter both email and password.');
+      setErrorMessage('Fyll i både e-post och lösenord.');
       return;
     }
 
@@ -37,7 +37,7 @@ export default function LoginScreen() {
     });
 
     if (error) {
-      setErrorMessage(error.message || 'Sign in failed.');
+      setErrorMessage(error.message || 'Inloggningen misslyckades.');
     }
 
     setSubmitting(false);
@@ -54,13 +54,13 @@ export default function LoginScreen() {
           keyboardShouldPersistTaps="handled"
           bounces={false}
         >
-          <Text variant="title">Welcome</Text>
+          <Text variant="title">Välkommen</Text>
           <Text variant="caption" style={styles.subtitle}>
-            Sign in to continue
+            Logga in för att fortsätta
           </Text>
 
           <Input
-            label="Email"
+            label="E-post"
             value={email}
             onChangeText={setEmail}
             placeholder="email@example.com"
@@ -70,7 +70,7 @@ export default function LoginScreen() {
           />
           <View style={styles.gap} />
           <Input
-            label="Password"
+            label="Lösenord"
             value={password}
             onChangeText={setPassword}
             placeholder="••••••••"
@@ -87,7 +87,7 @@ export default function LoginScreen() {
 
           <View style={styles.buttonWrap}>
             <Button
-              title={submitting ? 'Signing In...' : 'Sign In'}
+              title={submitting ? 'Loggar in...' : 'Logga in'}
               onPress={handleSignIn}
               disabled={submitting}
             />

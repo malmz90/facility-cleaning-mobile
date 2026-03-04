@@ -10,12 +10,12 @@ export default function BuildingsScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.container}>
-        <Text variant="title">Buildings</Text>
+        <Text variant="title">Byggnader</Text>
         <Text variant="body" style={styles.copy}>
-          Owner/admin building overview placeholder.
+          Översikt av byggnader för ägare och administratörer.
         </Text>
         <Button
-          title="Open Building Detail"
+          title="Öppna byggnadsdetaljer"
           onPress={() => navigation.navigate('BuildingDetail')}
         />
       </View>

@@ -9,9 +9,9 @@ export default function BuildingDetailScreen() {
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.container}>
-        <Text variant="title">Building Detail</Text>
+        <Text variant="title">Byggnadsdetaljer</Text>
         <Text variant="body" style={styles.copy}>
-          Building detail placeholder for owner/admin flow.
+          Platshållare för byggnadsdetaljer i ägar-/adminflödet.
         </Text>
       </View>
     </SafeAreaView>
