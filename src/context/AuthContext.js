@@ -11,6 +11,7 @@ export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
+  const [user, setUser] = useState(null);
   const [memberships, setMemberships] = useState([]);
   const [organizationId, setOrganizationId] = useState(null);
   const [role, setRole] = useState(null);
@@ -44,16 +45,31 @@ export function AuthProvider({ children }) {
     let isMounted = true;
 
     const bootstrap = async () => {
-      const { session: currentSession, error } = await getSession();
-      if (error) {
-        console.warn('Failed to load auth session:', error.message);
-      }
-      if (isMounted) {
+      try {
+        // On app start, restore the local session from AsyncStorage.
+        const { session: currentSession, error } = await getSession();
+        if (error) {
+          console.warn('Failed to load auth session:', error.message);
+        }
+
+        if (!isMounted) {
+          return;
+        }
+
         setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+
         if (currentSession?.user?.id) {
           await loadMemberships(currentSession.user.id);
+        } else {
+          setMemberships([]);
+          setOrganizationId(null);
+          setRole(null);
         }
-        setLoading(false);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
@@ -61,15 +77,32 @@ export function AuthProvider({ children }) {
 
     const {
       data: { subscription },
-    } = onAuthStateChange(nextSession => {
-      setSession(nextSession);
-      if (!nextSession?.user?.id) {
-        setMemberships([]);
-        setOrganizationId(null);
-        setRole(null);
-        return;
+    } = onAuthStateChange(async (event, nextSession) => {
+      // Keep auth state in sync for sign in/refresh/sign out.
+      try {
+        if (event === 'SIGNED_OUT') {
+          setSession(null);
+          setUser(null);
+          setMemberships([]);
+          setOrganizationId(null);
+          setRole(null);
+          return;
+        }
+
+        setSession(nextSession);
+        setUser(nextSession?.user ?? null);
+
+        if (!nextSession?.user?.id) {
+          setMemberships([]);
+          setOrganizationId(null);
+          setRole(null);
+          return;
+        }
+
+        await loadMemberships(nextSession.user.id);
+      } finally {
+        setLoading(false);
       }
-      loadMemberships(nextSession.user.id);
     });
 
     return () => {
@@ -82,6 +115,7 @@ export function AuthProvider({ children }) {
     const result = await signInWithEmail({ email, password });
     if (!result.error && result.session) {
       setSession(result.session);
+      setUser(result.session.user ?? null);
       if (result.session.user?.id) {
         await loadMemberships(result.session.user.id);
       }
@@ -90,9 +124,11 @@ export function AuthProvider({ children }) {
   };
 
   const signOut = async () => {
+    // Signing out clears only this app's local Supabase session (AsyncStorage).
     const result = await signOutService();
     if (!result.error) {
       setSession(null);
+      setUser(null);
       setMemberships([]);
       setOrganizationId(null);
       setRole(null);
@@ -115,7 +151,7 @@ export function AuthProvider({ children }) {
   const value = useMemo(
     () => ({
       session,
-      user: session?.user ?? null,
+      user,
       isAuthenticated: Boolean(session),
       role,
       organizationId,
@@ -128,7 +164,7 @@ export function AuthProvider({ children }) {
       signIn,
       signOut,
     }),
-    [loading, memberships, organizationId, role, session]
+    [loading, memberships, organizationId, role, session, user]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

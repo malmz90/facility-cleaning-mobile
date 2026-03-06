@@ -15,13 +15,14 @@ export async function signInWithEmail({ email, password }) {
 }
 
 export async function signOut() {
-  const { error } = await supabase.auth.signOut();
+  // Use local scope so logging out on mobile does not revoke web sessions.
+  const { error } = await supabase.auth.signOut({ scope: 'local' });
   return { error };
 }
 
 export function onAuthStateChange(callback) {
-  return supabase.auth.onAuthStateChange((_event, session) => {
-    callback(session ?? null);
+  return supabase.auth.onAuthStateChange((event, session) => {
+    callback(event, session ?? null);
   });
 }
 

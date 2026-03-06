@@ -1,28 +1,15 @@
 import React from 'react';
 import AuthNavigator from './AuthNavigator';
-import OwnerTabs from './OwnerTabs';
-import CleanerTabs from './CleanerTabs';
-import SelectOrganizationScreen from '../screens/common/SelectOrganizationScreen';
+import AppNavigator from './AppNavigator';
 import useAuth from '../hooks/useAuth';
 
 export default function RootNavigator() {
-  const { isAuthenticated, organizationId, role } = useAuth();
+  const { session } = useAuth();
 
-  if (!isAuthenticated) {
+  // Auth flow entrypoint: logged-in users see app routes, others see login routes.
+  if (!session) {
     return <AuthNavigator />;
   }
 
-  if (!organizationId) {
-    return <SelectOrganizationScreen />;
-  }
-
-  if (role === 'cleaner') {
-    return <CleanerTabs />;
-  }
-
-  if (role === 'owner' || role === 'admin') {
-    return <OwnerTabs />;
-  }
-
-  return <SelectOrganizationScreen />;
+  return <AppNavigator />;
 }
