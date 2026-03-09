@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
-import Text from './Text';
+import AppText from './AppText';
 import { COLORS } from '../theme/colors';
 import { SPACING } from '../theme/spacing';
 import { FONT_SIZES } from '../theme/typography';
 
-export default function Input({ label, value, onChangeText, placeholder, secureTextEntry, ...props }) {
+export default function AppInput({
+  label,
+  value,
+  onChangeText,
+  placeholder,
+  secureTextEntry,
+  ...props
+}) {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [focused, setFocused] = useState(false);
 
@@ -13,7 +20,7 @@ export default function Input({ label, value, onChangeText, placeholder, secureT
 
   return (
     <View style={styles.container}>
-      {label ? <Text style={styles.label}>{label}</Text> : null}
+      {label ? <AppText style={styles.label}>{label}</AppText> : null}
       <View style={[styles.inputRow, focused && styles.inputRowFocused]}>
         <TextInput
           value={value}
@@ -32,7 +39,7 @@ export default function Input({ label, value, onChangeText, placeholder, secureT
             style={styles.eyeButton}
             hitSlop={8}
           >
-            <Text style={styles.eyeIcon}>{passwordVisible ? '👁' : '🙈'}</Text>
+            <AppText style={styles.eyeIcon}>{passwordVisible ? '👁' : '🙈'}</AppText>
           </Pressable>
         )}
       </View>

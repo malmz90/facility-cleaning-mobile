@@ -4,7 +4,7 @@ import { COLORS } from '../theme/colors';
 import { SPACING } from '../theme/spacing';
 import { FONT_SIZES } from '../theme/typography';
 
-export default function Button({ title, onPress, disabled, variant = 'primary' }) {
+export default function AppButton({ title, onPress, disabled, variant = 'primary' }) {
   return (
     <Pressable
       onPress={onPress}

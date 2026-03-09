@@ -24,7 +24,7 @@ const variantMap = StyleSheet.create({
   },
 });
 
-export default function Text({ children, variant = 'body', style, ...props }) {
+export default function AppText({ children, variant = 'body', style, ...props }) {
   return (
     <RNText style={[variantMap[variant], style]} {...props}>
       {children}

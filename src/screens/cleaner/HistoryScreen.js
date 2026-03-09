@@ -1,7 +1,7 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet, View } from 'react-native';
-import Text from '../../components/Text';
+import AppText from '../../components/AppText';
 import { COLORS } from '../../theme/colors';
 import { SPACING } from '../../theme/spacing';
 
@@ -9,10 +9,10 @@ export default function HistoryScreen() {
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.container}>
-        <Text variant="title">Historik</Text>
-        <Text variant="body" style={styles.copy}>
+        <AppText variant="title">Historik</AppText>
+        <AppText variant="body" style={styles.copy}>
           Platshållare för städhistorik för städare.
-        </Text>
+        </AppText>
       </View>
     </SafeAreaView>
   );

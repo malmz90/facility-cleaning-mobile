@@ -7,9 +7,9 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Input from '../components/Input';
-import Text from '../components/Text';
-import Button from '../components/Button';
+import AppInput from '../components/AppInput';
+import AppText from '../components/AppText';
+import AppButton from '../components/AppButton';
 import useAuth from '../hooks/useAuth';
 import { COLORS } from '../theme/colors';
 import { SPACING } from '../theme/spacing';
@@ -54,12 +54,12 @@ export default function LoginScreen() {
           keyboardShouldPersistTaps="handled"
           bounces={false}
         >
-          <Text variant="title">Välkommen</Text>
-          <Text variant="caption" style={styles.subtitle}>
+          <AppText variant="title">Välkommen</AppText>
+          <AppText variant="caption" style={styles.subtitle}>
             Logga in för att fortsätta
-          </Text>
+          </AppText>
 
-          <Input
+          <AppInput
             label="E-post"
             value={email}
             onChangeText={setEmail}
@@ -69,7 +69,7 @@ export default function LoginScreen() {
             autoCorrect={false}
           />
           <View style={styles.gap} />
-          <Input
+          <AppInput
             label="Lösenord"
             value={password}
             onChangeText={setPassword}
@@ -80,13 +80,13 @@ export default function LoginScreen() {
           />
 
           {errorMessage ? (
-            <Text variant="caption" style={styles.errorText}>
+            <AppText variant="caption" style={styles.errorText}>
               {errorMessage}
-            </Text>
+            </AppText>
           ) : null}
 
           <View style={styles.buttonWrap}>
-            <Button
+            <AppButton
               title={submitting ? 'Loggar in...' : 'Logga in'}
               onPress={handleSignIn}
               disabled={submitting}
