@@ -4,12 +4,15 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Buildings, GearSix, QrCode } from 'phosphor-react-native';
 import BuildingsScreen from '../screens/owner/BuildingsScreen';
 import BuildingDetailScreen from '../screens/owner/BuildingDetailScreen';
-import ScanScreen from '../screens/cleaner/ScanScreen';
+import OwnerQrScanScreen from '../screens/owner/OwnerQrScanScreen';
+import CreateRoomScreen from '../screens/owner/CreateRoomScreen';
+import RoomDetailScreen from '../screens/owner/RoomDetailScreen';
 import SettingsScreen from '../screens/common/SettingsScreen';
 import { COLORS } from '../theme/colors';
 
 const Tab = createBottomTabNavigator();
 const BuildingsStack = createNativeStackNavigator();
+const ScanStack = createNativeStackNavigator();
 
 function BuildingsNavigator() {
   return (
@@ -24,7 +27,44 @@ function BuildingsNavigator() {
         component={BuildingDetailScreen}
         options={{ title: 'Byggnadsdetaljer' }}
       />
+      <BuildingsStack.Screen
+        name="OwnerQrScan"
+        component={OwnerQrScanScreen}
+        options={{ title: 'Skanna QR' }}
+      />
+      <BuildingsStack.Screen
+        name="OwnerCreateRoom"
+        component={CreateRoomScreen}
+        options={{ title: 'Skapa rum' }}
+      />
+      <BuildingsStack.Screen
+        name="OwnerRoomDetail"
+        component={RoomDetailScreen}
+        options={{ title: 'Rum' }}
+      />
     </BuildingsStack.Navigator>
+  );
+}
+
+function OwnerScanNavigator() {
+  return (
+    <ScanStack.Navigator>
+      <ScanStack.Screen
+        name="OwnerQrScan"
+        component={OwnerQrScanScreen}
+        options={{ title: 'Skanna QR' }}
+      />
+      <ScanStack.Screen
+        name="OwnerCreateRoom"
+        component={CreateRoomScreen}
+        options={{ title: 'Skapa rum' }}
+      />
+      <ScanStack.Screen
+        name="OwnerRoomDetail"
+        component={RoomDetailScreen}
+        options={{ title: 'Rum' }}
+      />
+    </ScanStack.Navigator>
   );
 }
 
@@ -48,9 +88,10 @@ export default function OwnerTabs() {
       />
       <Tab.Screen
         name="OwnerScanQr"
-        component={ScanScreen}
+        component={OwnerScanNavigator}
         options={{
           title: 'Skanna QR',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => <QrCode size={size} color={color} weight="regular" />,
         }}
       />
