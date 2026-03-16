@@ -1,8 +1,25 @@
 import { supabase } from '../lib/supabase';
 
 export async function getSession() {
-  const { data, error } = await supabase.auth.getSession();
-  return { session: data?.session ?? null, error };
+  try {
+    const { data, error } = await supabase.auth.getSession();
+
+    if (error) {
+      // The stored refresh token is invalid or has been revoked (e.g. the token
+      // was rotated, the project was reset, or the user was signed out remotely).
+      // Supabase may not always clear the stale session automatically, so we do
+      // it explicitly here to prevent the same error on every subsequent launch.
+      await supabase.auth.signOut({ scope: 'local' }).catch(() => {});
+      return { session: null, error: null };
+    }
+
+    return { session: data?.session ?? null, error: null };
+  } catch (err) {
+    // Supabase's internal auto-refresh timer can throw if the refresh token is
+    // invalid. Treat any thrown error the same way: no valid session.
+    await supabase.auth.signOut({ scope: 'local' }).catch(() => {});
+    return { session: null, error: null };
+  }
 }
 
 export async function signInWithEmail({ email, password }) {
