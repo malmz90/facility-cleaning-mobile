@@ -1,12 +1,32 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ClockCounterClockwise, GearSix, QrCode } from 'phosphor-react-native';
 import ScanScreen from '../screens/cleaner/ScanScreen';
 import HistoryScreen from '../screens/cleaner/HistoryScreen';
+import RoomDetailScreen from '../screens/cleaner/RoomDetailScreen';
 import SettingsScreen from '../screens/common/SettingsScreen';
 import { COLORS } from '../theme/colors';
 
 const Tab = createBottomTabNavigator();
+const ScanStack = createNativeStackNavigator();
+
+function CleanerScanNavigator() {
+  return (
+    <ScanStack.Navigator>
+      <ScanStack.Screen
+        name="CleanerScanScreen"
+        component={ScanScreen}
+        options={{ title: 'Skanna' }}
+      />
+      <ScanStack.Screen
+        name="CleanerRoomDetail"
+        component={RoomDetailScreen}
+        options={{ title: 'Rum' }}
+      />
+    </ScanStack.Navigator>
+  );
+}
 
 export default function CleanerTabs() {
   return (
@@ -19,9 +39,10 @@ export default function CleanerTabs() {
     >
       <Tab.Screen
         name="CleanerScan"
-        component={ScanScreen}
+        component={CleanerScanNavigator}
         options={{
           title: 'Skanna',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => <QrCode size={size} color={color} weight="regular" />,
         }}
       />
