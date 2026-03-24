@@ -1,9 +1,18 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, StyleSheet, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import AppButton from '../../components/AppButton';
+import AppInput from '../../components/AppInput';
 import AppText from '../../components/AppText';
 import { fetchRoomByScannedQr } from '../../services/cleaner.service';
 import { COLORS } from '../../theme/colors';
@@ -14,12 +23,16 @@ export default function ScanScreen({ navigation }) {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [checking, setChecking] = useState(false);
+  const [manualEntryVisible, setManualEntryVisible] = useState(false);
+  const [manualQrCode, setManualQrCode] = useState('');
   const processingRef = useRef(false);
 
   useFocusEffect(
     useCallback(() => {
       setScanned(false);
       setChecking(false);
+      setManualEntryVisible(false);
+      setManualQrCode('');
       processingRef.current = false;
       return () => {
         setScanned(true);
@@ -69,6 +82,54 @@ export default function ScanScreen({ navigation }) {
     await processQrCode(qrCodeId);
   };
 
+  const handleManualSubmit = async () => {
+    const qrCodeId = manualQrCode.trim();
+    if (!qrCodeId || checking || processingRef.current) {
+      return;
+    }
+
+    setScanned(true);
+    setChecking(true);
+    processingRef.current = true;
+    await processQrCode(qrCodeId);
+  };
+
+  const renderManualEntry = () => (
+    <View style={styles.manualWrap}>
+      {!manualEntryVisible ? (
+        <AppButton
+          title="Kan inte skanna? Ange QR-kod manuellt"
+          onPress={() => setManualEntryVisible(true)}
+          variant="secondary"
+        />
+      ) : (
+        <>
+          <AppInput
+            label="QR-kod"
+            value={manualQrCode}
+            onChangeText={setManualQrCode}
+            placeholder="Ange QR-kod"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+          <View style={styles.manualActions}>
+            <AppButton title="Använd kod" onPress={handleManualSubmit} disabled={checking} />
+            <View style={styles.manualActionsSecondary}>
+              <AppButton
+                title="Tillbaka till kamera"
+                onPress={() => {
+                  setManualEntryVisible(false);
+                  setManualQrCode('');
+                }}
+                variant="secondary"
+              />
+            </View>
+          </View>
+        </>
+      )}
+    </View>
+  );
+
   if (!permission) {
     return (
       <SafeAreaView style={styles.screen}>
@@ -88,6 +149,7 @@ export default function ScanScreen({ navigation }) {
             Tillåt kamera för att skanna rum.
           </AppText>
           <AppButton title="Ge kameraåtkomst" onPress={requestPermission} />
+          {renderManualEntry()}
         </View>
       </SafeAreaView>
     );
@@ -95,46 +157,67 @@ export default function ScanScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.screen}>
-      <View style={styles.container}>
-        <AppText variant="title">Skanna rum</AppText>
-        <AppText variant="caption" style={styles.subtitle}>
-          Rikta kameran mot rummets QR-kod.
-        </AppText>
+      <KeyboardAvoidingView
+        style={styles.keyboardWrap}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <AppText variant="title">Skanna rum</AppText>
+          <AppText variant="caption" style={styles.subtitle}>
+            Rikta kameran mot rummets QR-kod.
+          </AppText>
 
-        <View style={styles.cameraWrap}>
-          {isFocused ? (
-            <CameraView
-              style={styles.camera}
-              barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
-              onBarcodeScanned={scanned || checking ? undefined : handleBarCodeScanned}
-            />
+          {renderManualEntry()}
+
+          {!manualEntryVisible ? (
+            <>
+              <View style={styles.cameraWrap}>
+                {isFocused ? (
+                  <CameraView
+                    style={styles.camera}
+                    barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
+                    onBarcodeScanned={scanned || checking ? undefined : handleBarCodeScanned}
+                  />
+                ) : (
+                  <View style={styles.cameraInactive} />
+                )}
+                <View pointerEvents="none" style={styles.overlay}>
+                  <View style={styles.scanBox} />
+                </View>
+              </View>
+
+              <AppText variant="caption" style={styles.helperText}>
+                Håll QR-koden i rutan
+              </AppText>
+
+              {checking ? (
+                <View style={styles.checkingWrap}>
+                  <ActivityIndicator size="small" color={COLORS.primary} />
+                  <AppText variant="caption" style={styles.checkingText}>
+                    Kontrollerar QR-kod...
+                  </AppText>
+                </View>
+              ) : null}
+
+              {scanned && !checking ? (
+                <View style={styles.actionWrap}>
+                  <AppButton title="Skanna igen" onPress={resetScanner} variant="secondary" />
+                </View>
+              ) : null}
+            </>
           ) : (
-            <View style={styles.cameraInactive} />
+            <View style={styles.cameraPausedHint}>
+              <AppText variant="caption">
+                Kamera pausad medan manuell kod anges.
+              </AppText>
+            </View>
           )}
-          <View pointerEvents="none" style={styles.overlay}>
-            <View style={styles.scanBox} />
-          </View>
-        </View>
-
-        <AppText variant="caption" style={styles.helperText}>
-          Håll QR-koden i rutan
-        </AppText>
-
-        {checking ? (
-          <View style={styles.checkingWrap}>
-            <ActivityIndicator size="small" color={COLORS.primary} />
-            <AppText variant="caption" style={styles.checkingText}>
-              Kontrollerar QR-kod...
-            </AppText>
-          </View>
-        ) : null}
-
-        {scanned && !checking ? (
-          <View style={styles.actionWrap}>
-            <AppButton title="Skanna igen" onPress={resetScanner} variant="secondary" />
-          </View>
-        ) : null}
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -144,9 +227,13 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.backgroundPrimary,
     flex: 1,
   },
-  container: {
+  keyboardWrap: {
     flex: 1,
+  },
+  container: {
+    flexGrow: 1,
     padding: SPACING.x4,
+    paddingBottom: SPACING.x8,
   },
   centerContent: {
     alignItems: 'center',
@@ -201,5 +288,21 @@ const styles = StyleSheet.create({
   },
   actionWrap: {
     marginTop: SPACING.x3,
+  },
+  manualWrap: {
+    marginTop: SPACING.x3,
+  },
+  manualActions: {
+    marginTop: SPACING.x2,
+  },
+  manualActionsSecondary: {
+    marginTop: SPACING.x2,
+  },
+  cameraPausedHint: {
+    alignItems: 'center',
+    backgroundColor: COLORS.backgroundSecondary,
+    borderRadius: 10,
+    marginTop: SPACING.x3,
+    padding: SPACING.x3,
   },
 });
