@@ -54,13 +54,33 @@ async function resolveCleanerProfileId(authUserId) {
 export async function fetchRoomByScannedQr(scannedValue) {
   const { data, error } = await supabase
     .from('rooms')
-    .select('id, name, instructions, cleaning_frequency')
+    .select('id, name, cleaning_frequency')
     .eq('qr_code_id', scannedValue)
     .limit(1)
     .maybeSingle();
 
   return {
     data: data ?? null,
+    error,
+  };
+}
+
+export async function fetchRoomInstructions(roomId) {
+  if (!roomId) {
+    return {
+      data: [],
+      error: null,
+    };
+  }
+
+  const { data, error } = await supabase
+    .from('room_instructions')
+    .select('id, text, order_index')
+    .eq('room_id', roomId)
+    .order('order_index', { ascending: true });
+
+  return {
+    data: data ?? [],
     error,
   };
 }
